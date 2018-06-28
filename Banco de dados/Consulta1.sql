@@ -16,29 +16,29 @@ CREATE INDEX idx_mercadoria_peso_qtd_volumes ON mercadoria (peso, qtd_volumes);
 
 -- Consulta Antiga
 
-SELECT mercadoria.peso AS peso,
-    mercadoria.qtd_volumes AS qtd_volumes,
-    mercadoria_entrega.placa AS placa,
-    mercadoria_entrega.modelo AS modelo,
-    mercadoria_entrega.capacidade AS capacidade
+SELECT  mercadoria.peso AS peso,
+        mercadoria.qtd_volumes AS qtd_volumes,
+        mercadoria_entrega.placa AS placa,
+        mercadoria_entrega.modelo AS modelo,
+        mercadoria_entrega.capacidade AS capacidade
 FROM mercadoria
     INNER JOIN (
-    SELECT entrega.nf AS nf,
-        veiculo_viagem.placa AS placa,
-        veiculo_viagem.modelo AS modelo,
-        veiculo_viagem.capacidade AS capacidade
+    SELECT  entrega.nf AS nf,
+            veiculo_viagem.placa AS placa,
+            veiculo_viagem.modelo AS modelo,
+            veiculo_viagem.capacidade AS capacidade
     FROM entrega
         INNER JOIN (
-        SELECT veiculo.placa AS placa,
-            veiculo.modelo AS modelo,
-            veiculo.capacidade AS capacidade,
-            motorista_viagem.codigo_viagem AS codigo_viagem
+        SELECT  veiculo.placa AS placa,
+                veiculo.modelo AS modelo,
+                veiculo.capacidade AS capacidade,
+                motorista_viagem.codigo_viagem AS codigo_viagem
         FROM veiculo
             INNER JOIN motorista_viagem
             ON veiculo.placa = motorista_viagem.placa
-                  ) AS veiculo_viagem
+        ) AS veiculo_viagem
         ON entrega.codigo_viagem = veiculo_viagem.codigo_viagem
-              ) AS mercadoria_entrega
+    ) AS mercadoria_entrega
     ON mercadoria.nf = mercadoria_entrega.nf
 WHERE peso > 0 AND peso < 35 AND qtd_volumes > 0 AND qtd_volumes < 5
 ORDER BY peso;
@@ -103,8 +103,6 @@ ORDER BY peso;
 CREATE OR REPLACE FUNCTION consultar_veiculos(_peso_minimo REAL, _peso_maximo REAL, _qtd_volumes_minimo INTEGER, _qtd_volumes_maximo INTEGER, _limit INTEGER, _offset INTEGER)
 RETURNS TABLE(peso real, qtd_volumes integer, placa varchar(7), modelo varchar(20), capacidade real) AS $$
 BEGIN
-    SET ROLE app_role;
-
     RETURN QUERY
     SELECT  mercadoria.peso AS peso,
             mercadoria.qtd_volumes AS qtd_volumes,

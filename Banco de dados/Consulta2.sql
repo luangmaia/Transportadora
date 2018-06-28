@@ -26,41 +26,40 @@ CREATE INDEX idx_destinatario_nome_destinatario ON destinatario (nome_destinatar
 
 -- Consulta Antiga
 
-SELECT destinatario.cpf_cnpj AS cpf_cnpj_destinatario,
+SELECT  destinatario.cpf_cnpj AS cpf_cnpj_destinatario,
         destinatario.nome_destinatario AS nome_destinatario,
         mercadoria_motorista.cpf AS cpf_motorista,
         mercadoria_motorista.cnh AS cnh_motorista,
         mercadoria_motorista.nome_motorista AS nome_motorista
 FROM destinatario
+INNER JOIN (
+    SELECT  mercadoria.cpf_cnpj AS destinatario_cpf_cnpj,
+            mercadoria_entrega.cpf AS cpf,
+            mercadoria_entrega.cnh AS cnh,
+            mercadoria_entrega.nome_motorista AS nome_motorista
+    FROM mercadoria
+    INNER JOIN (
+        SELECT  entrega.nf AS nf,
+                moto_viagem.cpf AS cpf,
+                moto_viagem.cnh AS cnh,
+                moto_viagem.nome_motorista AS nome_motorista
+        FROM entrega
         INNER JOIN (
-    SELECT mercadoria.cpf_cnpj AS destinatario_cpf_cnpj,
-                mercadoria_entrega.cpf AS cpf,
-                mercadoria_entrega.cnh AS cnh,
-                mercadoria_entrega.nome_motorista AS nome_motorista
-        FROM mercadoria
-                INNER JOIN (
-        SELECT entrega.nf AS nf,
-                        moto_viagem.cpf AS cpf,
-                        moto_viagem.cnh AS cnh,
-                        moto_viagem.nome_motorista AS nome_motorista
-                FROM entrega
-                        INNER JOIN (
-            SELECT motorista.cpf AS cpf,
-                                motorista.cnh AS cnh,
-                                motorista.nome AS nome_motorista,
-                                motorista_viagem.codigo_viagem AS codigo_viagem
-                        FROM motorista
-                                INNER JOIN motorista_viagem
-                                ON motorista.cpf = motorista_viagem.cpf
+            SELECT  motorista.cpf AS cpf,
+                    motorista.cnh AS cnh,
+                    motorista.nome AS nome_motorista,
+                    motorista_viagem.codigo_viagem AS codigo_viagem
+            FROM motorista
+            INNER JOIN motorista_viagem
+            ON motorista.cpf = motorista_viagem.cpf
         ) AS moto_viagem
-                        ON entrega.codigo_viagem = moto_viagem.codigo_viagem
+        ON entrega.codigo_viagem = moto_viagem.codigo_viagem
     ) AS mercadoria_entrega
-                ON mercadoria.nf = mercadoria_entrega.nf
-        GROUP BY mercadoria.cpf_cnpj, mercadoria_entrega.cpf, mercadoria_entrega.cnh, mercadoria_entrega.nome_motorista
+    ON mercadoria.nf = mercadoria_entrega.nf
+    GROUP BY mercadoria.cpf_cnpj, mercadoria_entrega.cpf, mercadoria_entrega.cnh, mercadoria_entrega.nome_motorista
 ) AS mercadoria_motorista
-        ON destinatario.cpf_cnpj = mercadoria_motorista.destinatario_cpf_cnpj
-WHERE nome_destinatario
-ILIKE 'e%';
+ON destinatario.cpf_cnpj = mercadoria_motorista.destinatario_cpf_cnpj
+WHERE nome_destinatario ILIKE 'e%';
 
 ---------------------------------------------------------------------------------
 
@@ -133,8 +132,6 @@ ILIKE 'e%';
 CREATE OR REPLACE FUNCTION consultar_viagens(_nome_destinatario VARCHAR(50), _limit INTEGER, _offset INTEGER)
 RETURNS TABLE(nome_destinatario varchar(50), cpf_cnpj_destinatario numeric(14), cpf_motorista numeric(11), cnh_motorista numeric(11), nome_motorista varchar(50)) AS $$
 BEGIN
-    SET ROLE app_role;
-
     RETURN QUERY
     SELECT  destinatario.nome_destinatario AS nome_destinatario,
             destinatario.cpf_cnpj AS cpf_cnpj_destinatario,

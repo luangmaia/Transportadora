@@ -6,14 +6,13 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://postgres:postgres@localhost:5432/LabBD';
+// var connectionString = 'postgres://postgres:postgres@localhost:5432/LabBD';
 const cn = {
     host: 'localhost',
     port: 5432,
     database: 'LabBD',
-    user: 'postgres',
-    password: 'postgres',
-    ssl: false
+    user: 'app_role_select',
+    password: 'postgres'
 };
 var db = pgp(cn);
 

@@ -1,0 +1,5 @@
+--REVOKE ALL ON ALL TABLES IN SCHEMA PUBLIC FROM app_role_select;
+--DROP ROLE app_role_select;
+
+CREATE ROLE app_role_select WITH LOGIN PASSWORD 'postgres';
+GRANT SELECT ON ALL TABLES IN SCHEMA PUBLIC TO app_role_select;
