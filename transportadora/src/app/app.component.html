@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<mat-toolbar>
+    <button mat-flat-button [routerLink]="['/veiculos']" preserveFragment>Veículos por capacidade</button>
+    <button mat-flat-button [routerLink]="['/viagens']" preserveFragment>Viagens por destinatários</button>
+</mat-toolbar>
+<main>
+    <router-outlet></router-outlet>
+</main>

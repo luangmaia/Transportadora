@@ -1,0 +1,66 @@
+<form [formGroup]="buscaForm">
+    <div>
+        <mat-form-field>
+            <input autocomplete="off" matInput placeholder="Peso mínimo" formControlName="volumesMinimo">
+        </mat-form-field>
+        <mat-form-field>
+            <input autocomplete="off" matInput placeholder="Peso máximo" formControlName="volumesMaximo">
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field>
+            <input autocomplete="off" matInput placeholder="Quantidade de volumes mínima" formControlName="pesoMinimo">
+        </mat-form-field>
+        <mat-form-field>
+            <input autocomplete="off" matInput placeholder="Quantidade de volumes máxima" formControlName="pesoMaximo">
+        </mat-form-field>
+    </div>
+
+    <div class="botao-carregando">
+        <button [disabled]="loading || !todosCamposPreenchidos()" type="submit" color="primary" mat-raised-button (click)="buscar()">Buscar</button>
+    </div>
+</form>
+
+<div class="example-container mat-elevation-z8">
+    <div class="example-loading-shade" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="example-table-container">
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8" [ngClass]="{ 'display-none': dataSource.length === 0 }">
+            <ng-container matColumnDef="peso">
+                <mat-header-cell *matHeaderCellDef> Peso </mat-header-cell>
+                <mat-cell *matCellDef="let veiculo"> {{veiculo.peso}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="qtd_volumes">
+                <mat-header-cell *matHeaderCellDef> Volumes </mat-header-cell>
+                <mat-cell *matCellDef="let veiculo"> {{veiculo.qtd_volumes}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="placa">
+                <mat-header-cell *matHeaderCellDef> Placa </mat-header-cell>
+                <mat-cell *matCellDef="let veiculo"> {{veiculo.placa}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="modelo">
+                <mat-header-cell *matHeaderCellDef> Modelo </mat-header-cell>
+                <mat-cell *matCellDef="let veiculo"> {{veiculo.modelo}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="capacidade">
+                <mat-header-cell *matHeaderCellDef> Capacidade </mat-header-cell>
+                <mat-cell *matCellDef="let veiculo"> {{veiculo.capacidade}} </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    </div>
+</div>
+
+<div class="paginacao" *ngIf="dataSource.length > 0">
+    <button [disabled]="loading" color="primary" mat-raised-button (click)="voltarPagina()">Anterior</button>
+    <button [disabled]="loading" color="primary" mat-raised-button (click)="proximaPagina()">Próxima</button>
+</div>
